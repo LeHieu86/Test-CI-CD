@@ -104,7 +104,7 @@ public class TestLab6 {
     }
 
     @Test public void TC05_EmptyUsername() throws InterruptedException {
-        loginAndLog("TC05_EmptyUsername", "", "Password123", "Success");
+        loginAndLog("TC05_EmptyUsername", "", "Password123", "Failure");
     }
 
     @Test public void TC06_EmptyPassword() throws InterruptedException {
@@ -112,6 +112,6 @@ public class TestLab6 {
     }
 
     @Test public void TC07_EmptyBoth() throws InterruptedException {
-        loginAndLog("TC07_EmptyBoth", "", "", "Success");
+        loginAndLog("TC07_EmptyBoth", "", "", "Failure");
     }
 }
