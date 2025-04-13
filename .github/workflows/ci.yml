@@ -27,7 +27,10 @@ jobs:
         run: |
           set -e
           CHROME_VERSION=$(google-chrome --version | grep -oP '[0-9]+\.[0-9]+\.[0-9]+') || { echo "Failed to get Chrome version"; exit 1; }
-          CHROMEDRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_VERSION%.*}") || CHROMEDRIVER_VERSION="default"
+          CHROME_MAJOR_VERSION=$(echo $CHROME_VERSION | cut -d '.' -f 1)
+          
+          # Try to fetch the ChromeDriver version corresponding to Chrome's major version
+          CHROMEDRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_MAJOR_VERSION}") || CHROMEDRIVER_VERSION="default"
 
           if [ "$CHROMEDRIVER_VERSION" = "default" ]; then
             echo "Failed to retrieve ChromeDriver version for Chrome $CHROME_VERSION. Falling back to latest version."
