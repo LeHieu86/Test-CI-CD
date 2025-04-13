@@ -5,6 +5,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -17,7 +18,13 @@ public class TestLab6 {
 
     @BeforeAll
     public static void setup() {
-        driver = new ChromeDriver();
+    	// Cấu hình Chrome chạy ở chế độ headless cho CI
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--headless=new"); // hoặc --headless
+        options.addArguments("--disable-gpu");
+        options.addArguments("--no-sandbox");
+        options.addArguments("--user-data-dir=/tmp/test-profile"); // dùng thư mục profile riêng biệt
+        driver = new ChromeDriver(options);
         driver.manage().window().maximize();
 
         // Tiêu đề cột trong Excel
@@ -100,11 +107,11 @@ public class TestLab6 {
         loginAndLog("TC05_EmptyUsername", "", "Password123", "Failure");
     }
 
-//    @Test public void TC06_EmptyPassword() throws InterruptedException {
-//        loginAndLog("TC06_EmptyPassword", "student", "", "Failure");
-//    }
-//
-//    @Test public void TC07_EmptyBoth() throws InterruptedException {
-//        loginAndLog("TC07_EmptyBoth", "", "", "Failure");
-//    }
+    @Test public void TC06_EmptyPassword() throws InterruptedException {
+        loginAndLog("TC06_EmptyPassword", "student", "", "Failure");
+    }
+
+    @Test public void TC07_EmptyBoth() throws InterruptedException {
+        loginAndLog("TC07_EmptyBoth", "", "", "Failure");
+    }
 }
