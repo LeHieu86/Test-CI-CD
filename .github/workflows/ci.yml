@@ -25,14 +25,18 @@ jobs:
 
       - name: Install ChromeDriver
         run: |
-          CHROME_VERSION=$(google-chrome --version | grep -oP '[0-9]+\.[0-9]+\.[0-9]+')
-          CHROMEDRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_VERSION%.*}" || echo "default")
+          set -e
+          CHROME_VERSION=$(google-chrome --version | grep -oP '[0-9]+\.[0-9]+\.[0-9]+') || { echo "Failed to get Chrome version"; exit 1; }
+          CHROMEDRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_VERSION%.*}") || CHROMEDRIVER_VERSION="default"
+
           if [ "$CHROMEDRIVER_VERSION" = "default" ]; then
             echo "Failed to retrieve ChromeDriver version for Chrome $CHROME_VERSION. Falling back to latest version."
-            CHROMEDRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE")
+            CHROMEDRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE") || { echo "Failed to fetch ChromeDriver latest version"; exit 1; }
           fi
-          wget -q "https://chromedriver.storage.googleapis.com/${CHROMEDRIVER_VERSION}/chromedriver_linux64.zip" -O chromedriver_linux64.zip
-          unzip chromedriver_linux64.zip -d /usr/local/bin/
+
+          echo "Using ChromeDriver version $CHROMEDRIVER_VERSION"
+          wget -q "https://chromedriver.storage.googleapis.com/${CHROMEDRIVER_VERSION}/chromedriver_linux64.zip" -O chromedriver_linux64.zip || { echo "Failed to download ChromeDriver"; exit 1; }
+          unzip chromedriver_linux64.zip -d /usr/local/bin/ || { echo "Failed to unzip ChromeDriver"; exit 1; }
           chmod +x /usr/local/bin/chromedriver
 
       - name: Run Tests with Maven
